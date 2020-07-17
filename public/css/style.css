@@ -34,7 +34,7 @@ ul,ol{
 
 .days {
     font-size: 216px;
-    font-family: 'Rye', cursive;
+    font-family: 'FreeScpt', cursive;
     width: auto;
     text-align: center;
 }
@@ -45,8 +45,8 @@ ul,ol{
 
 .seconds {
     margin-top: 32px;
-    font-size: 20px;
-    font-family: "Monda", Georgia, sans-serif;
+    font-size: 45px;
+    font-family: "FreeScpt", Georgia, sans-serif;
     width: auto;
     text-align: center;
 }
@@ -80,22 +80,9 @@ ul,ol{
   filter:alpha(opacity=100);
   opacity: 1;
 }
-
 @font-face {
-  font-family: 'Rye';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Rye Regular'), local('Rye-Regular'), url('/static/fonts/Rye-Regular.woff') format('woff');
-}
-@font-face {
-  font-family: 'Monda';
-  font-style: normal;
-  font-weight: normal;
-  src: local('Monda'), local('Monda-Regular'), url('/static/fonts/Monda-Regular.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Monda';
+  font-family: 'FreeScpt';
   font-style: normal;
   font-weight: bold;
-  src: local('Monda Bold'), local('Monda-Bold'), url('/static/fonts/Monda-Bold.ttf') format('truetype');
+  src: local('Free Scpt'), local('Free-Scpt'), url('/static/fonts/FREESCPT.ttf') format('truetype');
 }
