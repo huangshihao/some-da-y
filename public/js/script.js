@@ -9,7 +9,7 @@ function hexifyWithZeroLead(tohex){
 }
 
 function updateNumbers() {
-    var start_time = 1538064000;
+    var start_time = 1540661838;
     var duration = parseInt(Date.now() / 1000 - start_time);
     
     var seconds = duration % 60;
