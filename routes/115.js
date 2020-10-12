@@ -40,7 +40,7 @@ router.post('/download', async (ctx) => {
   let respArr = []
   for (let i=0;i<fileList.length;i++) {
     const data = await download115.download(fileList[i])
-    await wait(3)
+    await wait(1)
     respArr.push(data)
   }
   console.log(respArr)
