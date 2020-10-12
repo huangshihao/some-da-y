@@ -3,11 +3,13 @@ const app = new Koa()
 const views = require('koa-views')
 const mount = require('koa-mount')
 const logger = require('koa-logger')
+const bodyParser = require('koa-bodyparser')
 
 const router = require('./routes').router
 
 //middlewares
 app.use(logger())
+app.use(bodyParser())
 app.use(async (ctx,next) => {
     const start = new Date()
     await next()

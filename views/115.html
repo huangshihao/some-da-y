@@ -1,20 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>115网盘</title>
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <style>
-        blockquote,body,button,dd,dl,dt,fieldset,form,h1,h2,h3,h4,h5,h6,hr,input,legend,li,ol,p,pre,td,textarea,th,ul{margin:0;padding:0}body,button,input,select,textarea{font:12px/1.5 tahoma,arial,'Hiragino Sans GB','\5b8b\4f53',sans-serif}h1,h2,h3,h4,h5,h6{font-size:100%}address,cite,dfn,em,var{font-style:normal}code,kbd,pre,samp{font-family:courier new,courier,monospace}small{font-size:12px}ol,ul{list-style:none}a{text-decoration:none}a:hover{text-decoration:underline}sup{vertical-align:text-top}sub{vertical-align:text-bottom}legend{color:#000}fieldset,img{border:0}button,input,select,textarea{font-size:100%}button{border-radius:0}table{border-collapse:collapse;border-spacing:0}
-    </style>
+  <meta charset="UTF-8">
+  <title>115网盘</title>
+  <style>
+    blockquote,body,button,dd,dl,dt,fieldset,form,h1,h2,h3,h4,h5,h6,hr,input,legend,li,ol,p,pre,td,textarea,th,ul{margin:0;padding:0}body,button,input,select,textarea{font:12px/1.5 tahoma,arial,'Hiragino Sans GB','\5b8b\4f53',sans-serif}h1,h2,h3,h4,h5,h6{font-size:100%}address,cite,dfn,em,var{font-style:normal}code,kbd,pre,samp{font-family:courier new,courier,monospace}small{font-size:12px}ol,ul{list-style:none}a{text-decoration:none}a:hover{text-decoration:underline}sup{vertical-align:text-top}sub{vertical-align:text-bottom}legend{color:#000}fieldset,img{border:0}button,input,select,textarea{font-size:100%}button{border-radius:0}table{border-collapse:collapse;border-spacing:0}
+  </style>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
-<body>
-    <div id="qrcode"></div>
-    <script>
-       $(function () {
-           new QRCode(document.getElementById("qrcode"), 'https://www.baidu.com')
-       })
-    </script>
+<body style="padding-top: 60px">
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">115网盘下载（批量）</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+  </div><!-- /.container-fluid -->
+</nav>
+<div class="row">
+  <div class="col-md-4">
+  </div>
+  <div class="col-md-4">
+    <div id="loginStatus" class="alert alert-info" role="alert">扫码登录，因为接口有调用速度限制所以下载慢，链接用回车分割批量下载</div>
+    <div style="text-align: center; margin-bottom: 20px">
+      <div style="display: inline-block" id="qrcode"></div>
+    </div>
+    <textarea class="form-control" id="urlText" cols="30" rows="10"></textarea>
+    <button style="margin-top: 20px" class="btn btn-primary" id="downloadBtn" disabled>下载</button>
+  </div>
+  <div class="col-md-4">
+  </div>
+</div>
+<script>
+  function setStatusText (text) {
+    $('#loginStatus').html(text)
+  }
+  function getStatus (callback) {
+    $.ajax({
+      url: '115/status'
+    }).then(res => {
+      const resObj = res.data
+      console.log(res)
+      if (res.state === 0) {
+        setStatusText('超时，刷新页面')
+        return
+      }
+      if (resObj.status === 1) {
+        // 手机已经扫码
+        setStatusText(resObj.msg)
+        getStatus(callback)
+      } else if (resObj.status === 2) {
+        // 已经登陆成功
+        callback()
+        setStatusText(resObj.msg)
+        return
+      } else {
+        setStatusText(resObj.msg)
+        getStatus(callback)
+      }
+    })
+  }
+  $(function () {
+    let canDownload = false
+    $.ajax('115/loginUrl').then(res => {
+      new QRCode(document.getElementById("qrcode"), res.data.qrcode)
+      getStatus(function () {
+        canDownload = true
+        $('#qrcode').hide()
+        $('#downloadBtn').attr('disabled', false)
+      })
+    })
+    const prefix = 'magnet:?xt=urn:btih:'
+    const reg = /^magnet/
+    $('#downloadBtn').on('click', function () {
+      const value = $('#urlText').val()
+      let urls = value.split(/[\s\n]/)
+      if (!urls.length) {
+        alert('链接不能为空')
+      } else {
+        urls = urls.map(url => {
+          return reg.test(url) ? url : prefix + url
+        })
+        $.ajax({
+          url: '115/download',
+          dataType: 'json',
+          contentType: "application/json;charset=utf-8",
+          method: 'POST',
+          data: JSON.stringify(urls)
+        }).then(data => {
+          console.log(data)
+        })
+      }
+    })
+  })
+</script>
 </body>
 </html>
