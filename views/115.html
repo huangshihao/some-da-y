@@ -28,18 +28,16 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
   </div><!-- /.container-fluid -->
 </nav>
-<div class="row">
-  <div class="col-md-4">
-  </div>
-  <div class="col-md-4">
-    <div id="loginStatus" class="alert alert-info" role="alert">扫码登录，因为接口有调用速度限制所以下载慢，链接用回车分割批量下载</div>
-    <div style="text-align: center; margin-bottom: 20px">
-      <div style="display: inline-block" id="qrcode"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div id="loginStatus" class="alert alert-info" role="alert">扫码登录，因为接口有调用速度限制所以下载慢，链接用回车分割批量下载</div>
+      <div style="text-align: center; margin-bottom: 20px">
+        <div style="display: inline-block" id="qrcode"></div>
+      </div>
+      <textarea class="form-control" id="urlText" cols="30" rows="10"></textarea>
+      <button style="margin-top: 20px" class="btn btn-primary" id="downloadBtn" disabled>下载</button>
     </div>
-    <textarea class="form-control" id="urlText" cols="30" rows="10"></textarea>
-    <button style="margin-top: 20px" class="btn btn-primary" id="downloadBtn" disabled>下载</button>
-  </div>
-  <div class="col-md-4">
   </div>
 </div>
 <script>
